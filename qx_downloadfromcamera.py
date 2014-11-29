@@ -18,12 +18,12 @@ import sys
 ip = "10.0.0.1"
 port = 10000
 
-i = open('/media/QX_CONFIG/interval.txt','r')
-interval = int(i.readline().strip())
-i.close()
+#i = open('/media/QX_CONFIG/interval.txt','r')
+#interval = int(i.readline().strip())
+#i.close()
 
-print "Interval: "+str(interval)
-print type(interval)
+#print "Interval: "+str(interval)
+#print type(interval)
 
 print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": starting application"
 while True:
@@ -32,37 +32,37 @@ while True:
     curDate = str(int(time.mktime(datetime.utcnow().timetuple())))
 
     try:
-        print "******************************************************************************************"
-        print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": taking picture"
+        sys.stderr.write("******************************************************************************************\n")
+        sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": taking picture\n")
         httpServ = httplib.HTTPConnection(ip, port, timeout=5)
         httpServ.connect()
         httpServ.request('POST', '/sony/camera', '{\"method\":\"actTakePicture\",\"params\":[],\"id\":10,\"version\":\"1.0\"}')
         response = httpServ.getresponse()
         
         if response.status == httplib.OK:
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture taken, beginning download"
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture taken, beginning download\n")
             resp = response.read()
             respSplit = resp.split('\"');
             imageName = curDate+'_img'+'.jpg'
             imageDoneName = curDate+'_image'+'.jpg'
             urlretrieve(respSplit[5], imageName)
             
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture saved ["+imageName+"]"
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture renamed ["+imageDoneName+"]"
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture saved ["+imageName+"]\n")
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture renamed ["+imageDoneName+"]\n")
             os.rename(imageName,imageDoneName)
         
         else:
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": bad request"
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": bad request\n")
         
         httpServ.close()
-        print "******************************************************************************************"
+        sys.stderr.write("******************************************************************************************\n")
 
     except:
         error = str(sys.exc_info()[0])
         if error.find("socket") > 0:
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Error: Cannot talk to camera"
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Error: Cannot talk to camera\n")
         else:
-            print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Unexpected error:"+ error
-        print "******************************************************************************************"
+            sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Unexpected error:"+ error + "\n")
+        sys.stderr.write("******************************************************************************************\n")
         continue
 
