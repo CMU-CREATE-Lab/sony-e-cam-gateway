@@ -12,35 +12,17 @@ import glob
 import sys
 import ast
 
-#download 'requests':
-#curl -OL https://github.com/kennethreitz/requests/tarball/master
-#tar -zxvf master
-#cd cd kennethreitz-requests-6b58a35/
-#sudo python setup.py install
-
-
+uploadCount = open('upload-count', 'a')
 
 payload = {'id': "CREATELabQX10"}
-#f = open('/media/QX_CONFIG/id.txt','r')
-#p = '{\'id\': \"'+(f.readline()).strip()+'\"}'
-#f.close()
-#payload = ast.literal_eval(p) 
 
 url = 'http://staging.breathecam.cmucreatelab.org:80/upload'
-
-#g = open('/media/QX_CONFIG/server.txt','r')
-#url = g.readline().strip()
-#g.close()
-
-
-
 
 sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": starting application\n")
 sys.stderr.write("payload: "+str(payload)+"\n")
 sys.stderr.write("url: "+url+"\n")
 
 while True:
-
     try:
         listOfFiles = sorted(glob.glob("*_image.jpg"))
         if len(listOfFiles) > 0:
@@ -55,6 +37,8 @@ while True:
                 sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Got a 200 from server, image upload successful\n")
                 sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Deleting Image\n")
                 os.remove(fileToSend)
+                uploadCount.write('+')
+                uploadCount.flush()
             else:
                 sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": Bad response from server, image upload failed\n")
             

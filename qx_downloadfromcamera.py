@@ -9,25 +9,14 @@ import socket
 import httplib
 import sys
 
-#download 'requests':
-#curl -OL https://github.com/kennethreitz/requests/tarball/master
-#tar -zxvf master
-#cd cd kennethreitz-requests-6b58a35/
-#sudo python setup.py install
-
 ip = "10.0.0.1"
 port = 10000
 
-#i = open('/media/QX_CONFIG/interval.txt','r')
-#interval = int(i.readline().strip())
-#i.close()
-
-#print "Interval: "+str(interval)
-#print type(interval)
-
 print strftime("%Y-%m-%d %H:%M:%S", gmtime())+": starting application"
-while True:
 
+downloadCount = open('download-count', 'a')
+
+while True:
 
     curDate = str(int(time.mktime(datetime.utcnow().timetuple())))
 
@@ -50,7 +39,8 @@ while True:
             sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture saved ["+imageName+"]\n")
             sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": picture renamed ["+imageDoneName+"]\n")
             os.rename(imageName,imageDoneName)
-        
+            downloadCount.write('+')
+            downloadCount.flush()
         else:
             sys.stderr.write(strftime("%Y-%m-%d %H:%M:%S", gmtime())+": bad request\n")
         
